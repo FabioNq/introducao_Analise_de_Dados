@@ -31,3 +31,7 @@ print(A[:2, 1:]) # [[20 30] [50 60]]
 B = A[A < 30]
 print(B) # [60 70 80 90]
 A[A < 30] = 0 # zera elementos menores que 30
+
+
+
+#%%
