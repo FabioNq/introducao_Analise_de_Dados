@@ -6,13 +6,20 @@ import sqlite3
 import json
 import os
 import xml.etree.ElementTree as ET
+
+import pathlib as path
+
 import matplotlib.pyplot as plt
+
+
+##DADOS= path("../dados")
 
 #%%
 print(os.getcwdb())
 
 #%%
-with open("dados/cnes_rn_amostra.json", "r", encoding="utf-8") as f:
+print("Passo 1 - Carregando Snapshot")
+with open("../dados/cnes_rn_amostra.json", "r", encoding="utf-8") as f:
     payload = json.load(f)
 
 #%%
@@ -29,6 +36,8 @@ df = pd.DataFrame(payload["registros"])
 print(f" \n {df.shape[0]} estabelecimentos, {df['municipio'].nunique()} municipio")
 print(df.groupby("municipio").size().sort_values(ascending=False))
 
+#%%
+df.info()
 
 #%%
 # Passando os dados para o banco de dados
@@ -49,14 +58,24 @@ resultado_sql = pd.read_sql(consulta,con)
 print(resultado_sql.to_string(index=False))
 con.close()
 
+#%%
+#parte
+# WEB Scrapping  
 
 
+
+
+
+
+
+
+######
 #%%
 # CONVERTENDO OS DADOS EM CSV E PARQUET
-df.to_csv("dados/cnes_rn_amostra.csv", index=False, sep=";", decimal=",", encoding="utf8")
+df.to_csv("../dados/cnes_rn_amostra.csv", index=False, sep=";", decimal=",", encoding="utf8")
 
-df.to_parquet("dados/cnes_rn_amostra.parquet", index=False)
-
+df.to_parquet("../dados/cnes_rn_amostra.parquet",engine='fastparquet', index=False)
+#.stat.st_size() para saber tamanho em bytes
 
 #%%
 #convertendo XML
@@ -72,9 +91,9 @@ encoding="utf-8", xml_declaration=True)
         
 #%%
 # Verificar Tamanho dos Dados
-tamanho_csv = "dados/cnes_rn_amostra.csv"
-tamanho_parquet = "dados/cnes_rn_amostra.parquet"
-tamanho_xml = "dados/ cnes_amostra_3linhas.xml"
+tamanho_csv = "../dados/cnes_rn_amostra.csv"
+tamanho_parquet = "../dados/cnes_rn_amostra.parquet"
+tamanho_xml = "../dados/cnes_amostra_3linhas.xml"
 
 tamanho_bytes_csv = os.path.getsize(tamanho_csv)
 tamanho_bytes_parquet = os.path.getsize(tamanho_parquet)
@@ -105,6 +124,7 @@ with open("dados/rn_contorno.json", encoding="utf-8") as f:
     contorno = json.load(f) # GeoJSON: lista de coordenadas [longitude, latitude]
 xs = [c[0] for c in contorno["coordinates"]]
 ys = [c[1] for c in contorno["coordinates"]]    
+
 fig, ax = plt.subplots(figsize=(7, 6.5))
 ax.plot(xs, ys, color="#00693e", linewidth=1.5)
 ax.fill(xs, ys, color="#00693e", alpha=0.05)

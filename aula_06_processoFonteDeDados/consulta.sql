@@ -8,4 +8,6 @@ WHERE
 GROUP BY municipio,descricao_tipo_unidade
 ORDER BY n DESC;
 
+
+SELECT * FROM estabelecimentos;
     
